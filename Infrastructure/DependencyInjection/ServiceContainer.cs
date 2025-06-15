@@ -39,6 +39,7 @@ namespace Infrastructure.DependencyInjection
                 };
             });
             services.AddScoped<IUser, UserRepo>();
+            services.AddScoped<IOrderService, OrderRepo>();
 
             return services;
         }

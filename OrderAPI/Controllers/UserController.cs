@@ -1,6 +1,5 @@
-﻿using Application.Contracts;
-using Application.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using Application.DTOs;
+using Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OrderAPI.Controllers
