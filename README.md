@@ -92,6 +92,8 @@ npm install
 Crie um arquivo `.env.local` na raiz do frontend com:
 ```
 NEXT_PUBLIC_API_URL=https://localhost:7049
+ou
+NEXT_PUBLIC_API_URL=https://localhost:5000
 ```
 
 4. Inicie o servidor de desenvolvimento:
