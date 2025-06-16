@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Xml.Linq;
 
 namespace Infrastructure.Repo
 {
@@ -74,6 +73,16 @@ namespace Infrastructure.Repo
             await _dbContext.SaveChangesAsync();
 
             return new RegistrationResponse(true, "Usuário registrado com sucesso");
+        }
+
+        public async Task<GetUserResponse> GetUserAsync(string userId)
+        {
+            var getUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            if (getUser == null) return new GetUserResponse(false, "Usuário não encontrado");
+
+            getUser.Password = "";
+
+            return new GetUserResponse(true, "Usuário encontrado", getUser);
         }
     }
 }

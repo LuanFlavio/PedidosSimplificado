@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OrderAPI.Controllers
 {
@@ -34,6 +35,17 @@ namespace OrderAPI.Controllers
                 return Ok(result);
             else return BadRequest(result);
 
+        }
+
+        [Authorize]
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<LoginResponse>> LoginUser(string userId)
+        {
+            var result = await user.GetUserAsync(userId);
+
+            if (result.Flag)
+                return Ok(result.User);
+            else return NotFound(result.Message);
         }
     }
 }

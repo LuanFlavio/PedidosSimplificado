@@ -6,5 +6,6 @@ namespace Application.Contracts
     {
         Task<RegistrationResponse> RegistrationUserAsync(RegisterUserDTO registerUserDTO);
         Task<LoginResponse> LoginUserAsync(LoginDTO loginDTO);
+        Task<GetUserResponse> GetUserAsync(string userId);
     }
 }
