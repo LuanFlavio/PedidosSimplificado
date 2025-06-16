@@ -21,11 +21,36 @@ O projeto é dividido em duas partes principais:
 
 ## Pré-requisitos
 
+### Desenvolvimento Local
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 18+](https://nodejs.org/)
 - [SQLite](https://www.sqlite.org/download.html)
 
-## Configuração e Execução
+### Docker
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+## Execução com Docker
+
+A maneira mais simples de executar o projeto é usando Docker Compose:
+
+1. Clone o repositório:
+```bash
+git clone [URL_DO_REPOSITÓRIO]
+cd [NOME_DO_PROJETO]
+```
+
+2. Execute o projeto:
+```bash
+docker-compose up --build
+```
+
+3. Acesse as aplicações:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
+- Swagger: http://localhost:5000/swagger
+
+## Desenvolvimento Local
 
 ### Backend
 
@@ -76,6 +101,31 @@ npm run dev
 
 O frontend estará disponível em `http://localhost:3000`
 
+## Estrutura Docker
+
+O projeto está containerizado com Docker, utilizando:
+
+### Backend (OrderAPI/Dockerfile)
+- Multi-stage build para otimização
+- Baseado em .NET 8 SDK para build
+- Runtime em .NET 8 ASP.NET
+- Exposição da porta 5000
+- Health check endpoint
+
+### Frontend (Dockerfile)
+- Multi-stage build para otimização
+- Baseado em Node.js 18
+- Otimizado com Alpine para produção
+- Exposição da porta 3000
+- Configuração de ambiente de produção
+
+### Docker Compose
+- Orquestração dos serviços
+- Rede dedicada para comunicação
+- Health check para garantir disponibilidade
+- Variáveis de ambiente configuradas
+- Dependências entre serviços
+
 ## Funcionalidades
 
 ### Autenticação
@@ -109,6 +159,7 @@ O frontend estará disponível em `http://localhost:3000`
 - SQLite
 - JWT Authentication
 - Swagger/OpenAPI
+- Docker
 
 ### Frontend
 - Next.js 14
@@ -116,23 +167,22 @@ O frontend estará disponível em `http://localhost:3000`
 - Material-UI
 - React Hot Toast
 - Axios
+- Docker
 
 ## Estrutura do Projeto
 
 ```
 ├── backend/
 │   ├── OrderAPI/           # API REST
+│   │   └── Dockerfile     # Configuração Docker do Backend
 │   ├── Application/        # DTOs e Contratos
 │   ├── Domain/            # Entidades
 │   └── Infrastructure/    # Repositórios e DB
-└── frontend/
-    ├── src/
-    │   ├── app/           # Páginas
-    │   ├── components/    # Componentes React
-    │   ├── services/      # Serviços da API
-    │   ├── hooks/         # Hooks Customizados
-    │   └── types/         # Definições TypeScript
-    └── public/            # Arquivos Estáticos
+├── frontend/
+│   ├── src/               # Código fonte
+│   ├── public/            # Arquivos Estáticos
+│   └── Dockerfile        # Configuração Docker do Frontend
+└── docker-compose.yml    # Orquestração dos containers
 ```
 
 ## Contribuição
