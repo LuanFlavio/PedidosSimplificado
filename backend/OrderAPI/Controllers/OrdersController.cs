@@ -2,6 +2,7 @@ using Application.DTOs;
 using Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace OrderAPI.Controllers;
 
@@ -29,7 +30,7 @@ public class OrdersController : ControllerBase
     {
         try
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 

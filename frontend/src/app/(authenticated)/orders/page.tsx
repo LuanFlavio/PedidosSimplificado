@@ -16,11 +16,10 @@ import {
 import { useEffect, useState } from 'react'
 import { orderService } from '@/services/order.service'
 import { OrderResponseDTO, OrderStatus } from '@/types/dtos'
+import toast from 'react-hot-toast'
+import { useAuth } from '@/hooks/useAuth'
 
-const statusColors: Record<
-  OrderStatus,
-  'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'
-> = {
+const statusColors: Record<string, 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'> = {
   [OrderStatus.Received]: 'info',
   [OrderStatus.AwaitingPayment]: 'warning',
   [OrderStatus.PaymentApproved]: 'success',
@@ -29,7 +28,7 @@ const statusColors: Record<
   [OrderStatus.StockReservationCancelled]: 'error',
 }
 
-const statusLabels: Record<OrderStatus, string> = {
+const statusLabels: Record<string, string> = {
   [OrderStatus.Received]: 'Recebido',
   [OrderStatus.AwaitingPayment]: 'Aguardando Pagamento',
   [OrderStatus.PaymentApproved]: 'Pagamento Aprovado',
@@ -41,7 +40,7 @@ const statusLabels: Record<OrderStatus, string> = {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderResponseDTO[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { isLoading: isAuthLoading } = useAuth()
 
   useEffect(() => {
     loadOrders()
@@ -52,26 +51,16 @@ export default function OrdersPage() {
       const data = await orderService.getAll()
       setOrders(data)
     } catch (err) {
-      setError('Erro ao carregar pedidos. Tente novamente.')
+      toast.error('Erro ao carregar pedidos. Tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
-  if (loading) {
+  if (loading || isAuthLoading) {
     return (
       <Container sx={{ py: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <CircularProgress />
-      </Container>
-    )
-  }
-
-  if (error) {
-    return (
-      <Container sx={{ py: 4 }}>
-        <Typography color="error" align="center">
-          {error}
-        </Typography>
       </Container>
     )
   }

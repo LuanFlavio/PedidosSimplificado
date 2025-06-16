@@ -3,12 +3,16 @@
 import { Container, Typography, Box, Card, CardContent, CardMedia, Button, Grid, CircularProgress } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { productService } from '@/services/product.service'
+import { orderService } from '@/services/order.service'
 import { ProductDTO } from '@/types/dtos'
+import toast from 'react-hot-toast'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductDTO[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [creatingOrder, setCreatingOrder] = useState<number | null>(null)
+  const { isLoading: isAuthLoading } = useAuth()
 
   useEffect(() => {
     loadProducts()
@@ -19,26 +23,37 @@ export default function ProductsPage() {
       const data = await productService.getAll()
       setProducts(data)
     } catch (err) {
-      setError('Erro ao carregar produtos. Tente novamente.')
+      toast.error('Erro ao carregar produtos. Tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
-  if (loading) {
+  const handleCreateOrder = async (productId: number) => {
+    setCreatingOrder(productId)
+    try {
+      await orderService.create({
+        items: [
+          {
+            productId,
+            quantity: 1,
+          },
+        ],
+      })
+      toast.success('Pedido criado com sucesso!')
+      // Recarregar produtos após criar o pedido
+      await loadProducts()
+    } catch (err) {
+      toast.error('Erro ao criar pedido. Tente novamente.')
+    } finally {
+      setCreatingOrder(null)
+    }
+  }
+
+  if (loading || isAuthLoading) {
     return (
       <Container sx={{ py: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <CircularProgress />
-      </Container>
-    )
-  }
-
-  if (error) {
-    return (
-      <Container sx={{ py: 4 }}>
-        <Typography color="error" align="center">
-          {error}
-        </Typography>
       </Container>
     )
   }
@@ -71,8 +86,14 @@ export default function ProductsPage() {
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                   Estoque: {product.stockQuantity}
                 </Typography>
-                <Button variant="contained" fullWidth sx={{ mt: 2 }}>
-                  Adicionar ao Carrinho
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onClick={() => handleCreateOrder(product.id)}
+                  disabled={creatingOrder === product.id}
+                >
+                  {creatingOrder === product.id ? 'Criando Pedido...' : 'Fazer Pedido'}
                 </Button>
               </CardContent>
             </Card>
